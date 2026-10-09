@@ -1,7 +1,14 @@
 {
   "name": "2.5-flash-image",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "description": "Interactive Studio & Visual Playground for Google Gemini 2.5 Flash Image API — Crafted with Apple Human Interface Guidelines and Liquid Glass Architecture.",
+  "author": "Rahul Kumar <https://github.com/Rahul08319>",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Rahul08319/2.5-Flash-Image.git"
+  },
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -17,7 +24,6 @@
   },
   "devDependencies": {
     "@types/node": "^22.14.0",
-    
     "typescript": "~5.8.2",
     "vite": "^6.2.0"
   }

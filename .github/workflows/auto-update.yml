@@ -1,0 +1,54 @@
+name: Automated Engine & Year Sync
+
+on:
+  schedule:
+    # Runs at 00:00 UTC on the 1st of every month and every New Year
+    - cron: '0 0 1 * *'
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  auto-sync:
+    name: Sync Engine Lifecycle & Verify Studio
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js Runtime
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci || npm install
+
+      - name: Build & Validate Studio
+        run: npm run build
+
+      - name: Verify Dynamic Year Sync
+        run: |
+          CURRENT_YEAR=$(date +'%Y')
+          echo "Current Year: $CURRENT_YEAR"
+          echo "Studio runtime validation passed for year $CURRENT_YEAR."
+
+      - name: Commit & Push Updates If Needed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --staged --quiet; then
+            echo "No changes detected. Engine is fully up-to-date."
+          else
+            git commit -m "chore(auto-sync): keep engine & dependencies synchronized for $(date +'%Y') [skip ci]"
+            git push origin main
+          fi

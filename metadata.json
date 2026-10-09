@@ -1,6 +1,9 @@
 {
   "name": "2.5 Flash Image",
-  "description": "Discover how to use the Gemini 2.5 image model (aka nano banana) using the Gemini JS SDK in an interactive way. No need to create an API key or set up your environment.",
+  "title": "Gemini 2.5 Flash Image Studio",
+  "description": "Interactive Cupertino-grade playground & visual studio for experimenting with Gemini 2.5 Image generation using the Gemini JS SDK.",
   "requestFramePermissions": [],
-  "prompt": ""
+  "prompt": "",
+  "author": "Rahul Kumar",
+  "updatedYear": 2026
 }

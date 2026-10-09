@@ -1,10 +1,25 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Get Started with Gemini API JS/TS SDK</title>
-    <link rel="stylesheet" href="index.css" />
+    <title>Gemini 2.5 Flash Image Studio — Apple Design</title>
+    
+    <!-- Meta tags for SEO, Social & Modern Browsers -->
+    <meta name="description" content="Interactive Apple-grade Playground & Visual Studio for Google Gemini 2.5 Flash Image API with Monaco Editor, spring physics, and real-time execution." />
+    <meta name="theme-color" content="#0d0e12" />
+    
+    <!-- Apple Web App & Icon Support -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="2.5 Flash Image" />
+
+    <!-- Google Fonts: Inter & JetBrains Mono for Cupertino-grade typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
     <script type="importmap">
       {
         "imports": {
@@ -22,55 +37,154 @@
     <link rel="stylesheet" href="/index.css" />
   </head>
   <body>
-    <header class="app-header">
-      <div class="file-info">
-        <i class="fa-regular fa-file-lines"></i>
-        <span id="notebook-title">Get Started with Gemini API JS/TS SDK</span>
-      </div>
-      <nav class="menu-bar">
-        <div class="menu-item">
-          <button class="menu-button">File</button>
-          <div class="dropdown-content">
-            <button id="new-btn">New</button>
-            <button id="download-btn">Download (.js)</button>
-            <button id="github-btn">View on GitHub</button>
+    <!-- Ambient Living Mesh Canvas (Apple Tahoe / VisionOS Spatial Gradient) -->
+    <div class="ambient-mesh-background" aria-hidden="true">
+      <div class="mesh-orb mesh-orb-1"></div>
+      <div class="mesh-orb mesh-orb-2"></div>
+      <div class="mesh-orb mesh-orb-3"></div>
+      <div class="mesh-glass-overlay"></div>
+    </div>
+
+    <!-- macOS Liquid Glass App Window -->
+    <div class="apple-window-container">
+      <!-- Apple Glass Header & Titlebar -->
+      <header class="app-header">
+        <div class="header-top-row">
+          <!-- macOS Traffic Light Window Controls -->
+          <div class="traffic-lights" aria-label="Window Controls">
+            <button class="traffic-dot traffic-close" title="Close Studio" id="traffic-close-btn" aria-label="Close"></button>
+            <button class="traffic-dot traffic-minimize" title="Minimize" id="traffic-minimize-btn" aria-label="Minimize"></button>
+            <button class="traffic-dot traffic-maximize" title="Expand Fullscreen" id="traffic-zoom-btn" aria-label="Zoom"></button>
+          </div>
+
+          <!-- Centered Title Capsule with Gemini Status Pill -->
+          <div class="file-info">
+            <div class="model-badge">
+              <span class="badge-pulse"></span>
+              <i class="fa-solid fa-sparkles"></i>
+              <span class="badge-text">Gemini 2.5 Flash</span>
+            </div>
+            <span class="title-separator">/</span>
+            <span id="notebook-title">2.5-Flash-Image Quickstart</span>
+            <span class="version-tag" id="dynamic-year-badge">2026 Live</span>
+          </div>
+
+          <!-- Header Right Quick Actions -->
+          <div class="header-actions">
+            <!-- Theme Toggle (Liquid Glass) -->
+            <button class="apple-pill-btn icon-only" id="theme-toggle-btn" title="Toggle Light/Dark Theme (⌥T)">
+              <i class="fa-regular fa-sun" id="theme-icon"></i>
+            </button>
+
+            <!-- Quick Run All Button -->
+            <button class="apple-pill-btn primary" id="quick-run-all-btn" title="Run all code cells (⇧⌘↵)">
+              <i class="fa-solid fa-play"></i>
+              <span>Run All</span>
+            </button>
+
+            <!-- GitHub Repo Link -->
+            <a href="https://github.com/Rahul08319/2.5-Flash-Image" target="_blank" rel="noopener noreferrer" class="apple-pill-btn secondary" title="View Source on GitHub">
+              <i class="fa-brands fa-github"></i>
+              <span>GitHub</span>
+            </a>
           </div>
         </div>
-        <div class="menu-item">
-          <button class="menu-button">Edit</button>
-          <div class="dropdown-content">
-            <button id="cut-cell-btn">Cut Cell</button>
-            <button id="copy-cell-btn">Copy Cell</button>
-            <button id="paste-cell-btn">Paste Cell</button>
+
+        <!-- macOS Native-style Menu Bar -->
+        <div class="header-bottom-row">
+          <nav class="menu-bar">
+            <div class="menu-item">
+              <button class="menu-button"><i class="fa-regular fa-folder"></i> File <i class="fa-solid fa-chevron-down chevron-micro"></i></button>
+              <div class="dropdown-content">
+                <button id="new-btn"><i class="fa-solid fa-plus"></i> New Notebook</button>
+                <button id="download-btn"><i class="fa-solid fa-arrow-down-to-bracket"></i> Download Notebook (.js) <kbd>⌘D</kbd></button>
+                <div class="dropdown-divider"></div>
+                <button id="github-btn"><i class="fa-brands fa-github"></i> View Upstream Cookbook</button>
+              </div>
+            </div>
+
+            <div class="menu-item">
+              <button class="menu-button"><i class="fa-regular fa-pen-to-square"></i> Edit <i class="fa-solid fa-chevron-down chevron-micro"></i></button>
+              <div class="dropdown-content">
+                <button id="cut-cell-btn"><i class="fa-solid fa-scissors"></i> Cut Cell <kbd>⌘X</kbd></button>
+                <button id="copy-cell-btn"><i class="fa-regular fa-copy"></i> Copy Cell <kbd>⌘C</kbd></button>
+                <button id="paste-cell-btn"><i class="fa-regular fa-clipboard"></i> Paste Cell <kbd>⌘V</kbd></button>
+              </div>
+            </div>
+
+            <div class="menu-item">
+              <button class="menu-button"><i class="fa-regular fa-eye"></i> View <i class="fa-solid fa-chevron-down chevron-micro"></i></button>
+              <div class="dropdown-content">
+                <button id="toggle-fullscreen-btn"><i class="fa-solid fa-expand"></i> Toggle Fullscreen <kbd>F11</kbd></button>
+                <button id="toggle-line-numbers-btn"><i class="fa-solid fa-list-ol"></i> Toggle Line Numbers</button>
+              </div>
+            </div>
+
+            <div class="menu-item">
+              <button class="menu-button"><i class="fa-solid fa-circle-plus"></i> Insert <i class="fa-solid fa-chevron-down chevron-micro"></i></button>
+              <div class="dropdown-content">
+                <button id="insert-code-btn"><i class="fa-solid fa-code"></i> Insert Code Below</button>
+                <button id="insert-md-btn"><i class="fa-brands fa-markdown"></i> Insert Markdown Below</button>
+                <div class="dropdown-divider"></div>
+                <button id="insert-code-above-btn"><i class="fa-solid fa-arrow-up"></i> Insert Code Above</button>
+                <button id="insert-md-above-btn"><i class="fa-solid fa-arrow-up"></i> Insert Markdown Above</button>
+              </div>
+            </div>
+
+            <div class="menu-item">
+              <button class="menu-button"><i class="fa-solid fa-bolt"></i> Runtime <i class="fa-solid fa-chevron-down chevron-micro"></i></button>
+              <div class="dropdown-content">
+                <button id="run-all-btn"><i class="fa-solid fa-play"></i> Run All Cells <kbd>⇧⌘↵</kbd></button>
+                <button id="restart-kernel-btn"><i class="fa-solid fa-rotate-right"></i> Restart Kernel</button>
+                <button id="restart-run-all-btn"><i class="fa-solid fa-forward-step"></i> Restart & Run All</button>
+              </div>
+            </div>
+          </nav>
+
+          <!-- Status Indicator Pill -->
+          <div class="system-status-indicator" id="status-indicator">
+            <span class="status-dot"></span>
+            <span class="status-label" id="status-text">Kernel Ready</span>
           </div>
         </div>
-        <div class="menu-item">
-          <button class="menu-button">View</button>
-          <div class="dropdown-content">
-            <button id="toggle-fullscreen-btn">Toggle Fullscreen</button>
-            <button id="toggle-line-numbers-btn">Toggle Line Numbers</button>
+      </header>
+
+      <!-- Main Notebook Workspace Canvas -->
+      <main id="notebook" class="notebook-canvas" role="region" aria-label="Interactive Notebook"></main>
+
+      <!-- Apple-grade Glass Footer with Dynamic Auto-Update Logic -->
+      <footer class="app-footer">
+        <div class="footer-left">
+          <div class="footer-logo">
+            <span class="apple-apple-icon"></span>
+            <span class="studio-text">Gemini 2.5 Flash Image Studio</span>
+          </div>
+          <span class="footer-pill" id="footer-auto-update-pill">
+            <i class="fa-solid fa-sync fa-spin-pulse"></i> Auto-Sync: 2026–<span id="footer-dynamic-year">2026</span>
+          </span>
+        </div>
+
+        <div class="footer-center">
+          <div class="shortcut-hints">
+            <span class="hint-item"><kbd>⌘</kbd> + <kbd>↵</kbd> Run Cell</span>
+            <span class="hint-divider">•</span>
+            <span class="hint-item"><kbd>Double Click</kbd> Edit Markdown</span>
+            <span class="hint-divider">•</span>
+            <span class="hint-item"><kbd>⌘</kbd> + <kbd>D</kbd> Export</span>
           </div>
         </div>
-        <div class="menu-item">
-          <button class="menu-button">Insert</button>
-          <div class="dropdown-content">
-            <button id="insert-code-btn">Insert Code Cell</button>
-            <button id="insert-md-btn">Insert Markdown Cell</button>
-            <button id="insert-code-above-btn">Insert Code Above</button>
-            <button id="insert-md-above-btn">Insert Markdown Above</button>
-          </div>
+
+        <div class="footer-right">
+          <span class="copyright-notice">
+            © <span id="copyright-year">2026</span> <a href="https://github.com/Rahul08319" target="_blank" rel="noopener noreferrer">Rahul Kumar</a>. Apache-2.0 License.
+          </span>
         </div>
-        <div class="menu-item">
-          <button class="menu-button">Runtime</button>
-          <div class="dropdown-content">
-            <button id="run-all-btn">Run All</button>
-            <button id="restart-kernel-btn">Restart Kernel</button>
-            <button id="restart-run-all-btn">Restart & Run All</button>
-          </div>
-        </div>
-      </nav>
-    </header>
-    <div id="notebook"></div>
+      </footer>
+    </div>
+
+    <!-- Apple Dynamic Island Toast Container -->
+    <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
     <script type="module" src="/index.tsx"></script>
   </body>
 </html>
