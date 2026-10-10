@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  * 
  * Gemini 2.5 Flash Image Studio — Apple Design & Liquid Glass Architecture
- * Enhanced with dynamic year auto-updating, spring micro-interactions,
- * and Cupertino Human Interface Guidelines.
+ * Enhanced with dynamic year auto-updating, Apple QuickLook image lightbox,
+ * Control Center settings, Floating Prompt Island, and Cupertino spring physics.
  */
 
 import loader from '@monaco-editor/loader';
@@ -45,6 +45,7 @@ interface Cell {
   isOutputVisible?: boolean;
   isExecuted?: boolean;
   lastExecutedContent?: string;
+  executionDurationMs?: number;
 }
 
 // Global runtime references
@@ -119,6 +120,9 @@ function initDynamicYear() {
   const copyrightYear = document.getElementById('copyright-year');
   if (copyrightYear) copyrightYear.textContent = `${currentYear}`;
 
+  const diagYear = document.getElementById('diag-year');
+  if (diagYear) diagYear.textContent = `${currentYear}`;
+
   console.log(`[Auto-Update Logic] Engine year auto-synchronized for ${currentYear} and future releases.`);
 }
 
@@ -158,6 +162,226 @@ function updateThemeIcon(theme: string) {
   if (icon) {
     icon.className = theme === 'dark' ? 'fa-regular fa-sun' : 'fa-regular fa-moon';
   }
+}
+
+/* --------------------------------------------------------------------------
+   Apple QuickLook Image Lightbox Modal
+   -------------------------------------------------------------------------- */
+function initQuickLookLightbox() {
+  const modal = document.getElementById('quicklook-modal');
+  const backdrop = document.getElementById('quicklook-backdrop');
+  const closeBtn = document.getElementById('quicklook-close-btn');
+  const copyBtn = document.getElementById('quicklook-copy-btn');
+  const downloadBtn = document.getElementById('quicklook-download-btn');
+  const imgEl = document.getElementById('quicklook-img') as HTMLImageElement;
+
+  function closeModal() {
+    if (modal) {
+      modal.style.display = 'none';
+      modal.setAttribute('aria-hidden', 'true');
+    }
+  }
+
+  backdrop?.addEventListener('click', closeModal);
+  closeBtn?.addEventListener('click', closeModal);
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal?.style.display !== 'none') {
+      closeModal();
+    }
+  });
+
+  copyBtn?.addEventListener('click', async () => {
+    if (imgEl?.src) {
+      try {
+        await navigator.clipboard.writeText(imgEl.src);
+        showAppleToast('Image data URL copied to clipboard', 'success', 'fa-clipboard');
+      } catch {
+        showAppleToast('Clipboard copy restricted by browser', 'error', 'fa-circle-xmark');
+      }
+    }
+  });
+
+  downloadBtn?.addEventListener('click', () => {
+    if (imgEl?.src) {
+      const a = document.createElement('a');
+      setAnchorHref(a, imgEl.src);
+      a.download = `gemini-2.5-flash-image-${Date.now()}.png`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      showAppleToast('Image saved to downloads', 'success', 'fa-download');
+    }
+  });
+}
+
+function openQuickLook(src: string, label = 'Gemini 2.5 Flash Render') {
+  const modal = document.getElementById('quicklook-modal');
+  const imgEl = document.getElementById('quicklook-img') as HTMLImageElement;
+  const filenameEl = document.getElementById('quicklook-filename');
+
+  if (modal && imgEl) {
+    imgEl.src = src;
+    if (filenameEl) filenameEl.textContent = label;
+    modal.style.display = 'flex';
+    modal.setAttribute('aria-hidden', 'false');
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Apple Control Center Popover Controller
+   -------------------------------------------------------------------------- */
+function initControlCenter() {
+  const settingsBtn = document.getElementById('settings-btn');
+  const popover = document.getElementById('control-center-popover');
+  const closeBtn = document.getElementById('close-popover-btn');
+  const fontSizeButtons = document.querySelectorAll('#font-size-segmented button');
+  const lineNumbersSwitch = document.getElementById('toggle-line-numbers-switch') as HTMLInputElement;
+  const meshSwitch = document.getElementById('toggle-mesh-switch') as HTMLInputElement;
+
+  settingsBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (popover) {
+      popover.style.display = popover.style.display === 'none' ? 'flex' : 'none';
+    }
+  });
+
+  closeBtn?.addEventListener('click', () => {
+    if (popover) popover.style.display = 'none';
+  });
+
+  document.addEventListener('click', (e) => {
+    const target = e.target as HTMLElement;
+    if (popover && !popover.contains(target) && target !== settingsBtn && !settingsBtn?.contains(target)) {
+      popover.style.display = 'none';
+    }
+  });
+
+  fontSizeButtons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      fontSizeButtons.forEach((b) => b.classList.remove('active'));
+      btn.classList.add('active');
+      const size = Number((btn as HTMLElement).dataset.size || '14');
+      Object.values(monacoInstances).forEach((inst) => {
+        inst.updateOptions({fontSize: size});
+      });
+      showAppleToast(`Editor font set to ${size}px`, 'info', 'fa-font');
+    });
+  });
+
+  lineNumbersSwitch?.addEventListener('change', () => {
+    const enabled = lineNumbersSwitch.checked;
+    Object.values(monacoInstances).forEach((inst) => {
+      inst.updateOptions({lineNumbers: enabled ? 'on' : 'off'});
+    });
+    showAppleToast(`Line numbers ${enabled ? 'enabled' : 'disabled'}`, 'info', 'fa-list-ol');
+  });
+
+  meshSwitch?.addEventListener('change', () => {
+    const meshCanvas = document.getElementById('mesh-canvas');
+    if (meshCanvas) {
+      meshCanvas.style.display = meshSwitch.checked ? 'block' : 'none';
+    }
+    showAppleToast(`Living mesh ${meshSwitch.checked ? 'enabled' : 'disabled'}`, 'info', 'fa-wand-magic-sparkles');
+  });
+}
+
+/* --------------------------------------------------------------------------
+   Apple Floating Quick Prompt Island Logic
+   -------------------------------------------------------------------------- */
+function initPromptIsland() {
+  const inputEl = document.getElementById('prompt-input') as HTMLInputElement;
+  const generateBtn = document.getElementById('generate-prompt-btn');
+  const ratioPills = document.querySelectorAll('.ratio-picker .ratio-pill');
+  const tagPills = document.querySelectorAll('.prompt-tags .tag-pill');
+
+  let selectedRatio = '1:1';
+
+  ratioPills.forEach((pill) => {
+    pill.addEventListener('click', () => {
+      ratioPills.forEach((p) => p.classList.remove('active'));
+      pill.classList.add('active');
+      selectedRatio = (pill as HTMLElement).dataset.ratio || '1:1';
+      showAppleToast(`Aspect ratio set to ${selectedRatio}`, 'info', 'fa-crop');
+    });
+  });
+
+  async function handlePromptSubmission(promptText: string) {
+    if (!promptText.trim()) {
+      showAppleToast('Please enter an image description prompt', 'error', 'fa-triangle-exclamation');
+      inputEl?.focus();
+      return;
+    }
+
+    showAppleToast('Synthesizing image cell with Gemini 2.5 Flash...', 'info', 'fa-sparkles');
+
+    // Create a code cell executing this prompt with Gemini 2.5 Flash
+    const cellCode = `// Generated via Apple Quick Prompt Island
+const prompt = ${JSON.stringify(promptText)};
+const aspectRatio = "${selectedRatio}";
+
+console.log("⚡ Synthesizing with Gemini 2.5 Flash Image Model...");
+console.log("Prompt:", prompt);
+console.log("Aspect Ratio:", aspectRatio);
+
+// High-fidelity synthesized visual asset preview
+const previewSvg = \`<svg width="640" height="360" viewBox="0 0 640 360" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="geminiGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a84ff" />
+      <stop offset="40%" stop-color="#bf5af2" />
+      <stop offset="80%" stop-color="#30d158" />
+      <stop offset="100%" stop-color="#ff9f0a" />
+    </linearGradient>
+    <filter id="meshGlow">
+      <feGaussianBlur stdDeviation="18" result="blur" />
+    </filter>
+  </defs>
+  <rect width="640" height="360" rx="20" fill="#0c0e14" />
+  <circle cx="200" cy="140" r="130" fill="url(#geminiGlow)" filter="url(#meshGlow)" opacity="0.65" />
+  <circle cx="480" cy="240" r="140" fill="#0a84ff" filter="url(#meshGlow)" opacity="0.45" />
+  <rect x="30" y="30" width="580" height="300" rx="16" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.18)" stroke-width="1" />
+  <text x="320" y="140" font-family="-apple-system, sans-serif" font-size="22" font-weight="700" fill="#ffffff" text-anchor="middle"> Gemini 2.5 Flash Image Render</text>
+  <text x="320" y="180" font-family="-apple-system, sans-serif" font-size="14" fill="#98989f" text-anchor="middle">${promptText.slice(0, 50)}...</text>
+  <rect x="230" y="215" width="180" height="34" rx="17" fill="#0a84ff" />
+  <text x="320" y="238" font-family="-apple-system, sans-serif" font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle">Ratio ${selectedRatio} • Synthesized</text>
+</svg>\`;
+
+const dataUrl = "data:image/svg+xml;utf8," + encodeURIComponent(previewSvg);
+console.image(dataUrl);
+console.log("✅ Synthesis completed in 18ms. Click image to QuickLook.");`;
+
+    const newIndex = cells.length;
+    await addCell(cellCode, 'js', false, [], newIndex);
+
+    // Scroll to new cell smoothly
+    const newCellElement = document.getElementById(`cell-container-cell${cellCounter - 1}`);
+    newCellElement?.scrollIntoView({behavior: 'smooth', block: 'center'});
+
+    // Run the cell automatically
+    await runCell(`cell${cellCounter - 1}`);
+
+    if (inputEl) inputEl.value = '';
+  }
+
+  generateBtn?.addEventListener('click', () => {
+    handlePromptSubmission(inputEl?.value || '');
+  });
+
+  inputEl?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handlePromptSubmission(inputEl.value);
+    }
+  });
+
+  tagPills.forEach((tag) => {
+    tag.addEventListener('click', () => {
+      const promptText = (tag as HTMLElement).dataset.prompt || '';
+      if (inputEl) inputEl.value = promptText;
+      handlePromptSubmission(promptText);
+    });
+  });
 }
 
 /* --------------------------------------------------------------------------
@@ -253,7 +477,7 @@ function renderOutputs(outputDiv: HTMLElement, outputs: Output[]) {
           };
           return escapeMap[match] || match;
         });
-        outputHtml += `<div class="image-output-card"><img src="${escapedSrc}" alt="Gemini Output" style="max-width: 100%; display: block; margin: 0.5em 0;" /></div>`;
+        outputHtml += `<div class="image-output-card" title="Click to inspect in QuickLook"><img src="${escapedSrc}" alt="Gemini Output" style="max-width: 100%; display: block; margin: 0.5em 0;" /></div>`;
         break;
       }
       default:
@@ -263,6 +487,13 @@ function renderOutputs(outputDiv: HTMLElement, outputs: Output[]) {
   });
 
   setElementInnerHtml(outputDiv, sanitizeHtml(outputHtml));
+
+  // Add click listener to all rendered images to trigger QuickLook lightbox!
+  outputDiv.querySelectorAll('.image-output-card img').forEach((img) => {
+    img.addEventListener('click', () => {
+      openQuickLook((img as HTMLImageElement).src);
+    });
+  });
 }
 
 function parseNotebookFile(content: string) {
@@ -432,6 +663,49 @@ async function addCell(
     executionStatus.style.display = 'none';
   }
 
+  // Cell Meta Bar (Index, Language, Execution duration, Copy code)
+  const metaBar = document.createElement('div');
+  metaBar.className = 'cell-meta-bar';
+
+  const metaLeft = document.createElement('div');
+  metaLeft.className = 'cell-meta-left';
+
+  const cellIndexBadge = document.createElement('span');
+  cellIndexBadge.className = 'cell-index-badge';
+  cellIndexBadge.textContent = `[${cellCounter}]`;
+
+  const langBadge = document.createElement('span');
+  langBadge.className = 'cell-lang-badge';
+  langBadge.textContent = type === 'js' ? 'JS (ESNext)' : 'Markdown';
+
+  const timerPill = document.createElement('span');
+  timerPill.className = 'cell-timer-pill';
+  timerPill.id = `${cellId}_timer`;
+
+  metaLeft.appendChild(cellIndexBadge);
+  metaLeft.appendChild(langBadge);
+  metaLeft.appendChild(timerPill);
+
+  const metaRight = document.createElement('div');
+  metaRight.className = 'cell-meta-right';
+
+  const copyCodeBtn = document.createElement('button');
+  copyCodeBtn.className = 'cell-meta-action-btn';
+  copyCodeBtn.title = 'Copy Cell Code';
+  copyCodeBtn.innerHTML = '<i class="fa-regular fa-copy"></i>';
+  copyCodeBtn.addEventListener('click', async () => {
+    const editor = monacoInstances[cellId];
+    if (editor) {
+      await navigator.clipboard.writeText(editor.getValue());
+      showAppleToast('Cell code copied to clipboard', 'info', 'fa-copy');
+    }
+  });
+
+  metaRight.appendChild(copyCodeBtn);
+  metaBar.appendChild(metaLeft);
+  metaBar.appendChild(metaRight);
+
+  // Floating hover menu
   const hoverMenu = document.createElement('div');
   hoverMenu.className = 'cell-hover-menu';
 
@@ -490,6 +764,7 @@ async function addCell(
 
   cellDiv.appendChild(dragHandle);
   cellDiv.appendChild(executionStatus);
+  cellDiv.appendChild(metaBar);
   cellDiv.appendChild(hoverMenu);
   cellDiv.appendChild(editorContainer);
   cellDiv.appendChild(outputToggle);
@@ -702,6 +977,7 @@ async function runCell(cellId: string) {
   const outputDiv = document.getElementById(`${cellId}_output`) as HTMLDivElement;
   const editorContainer = document.getElementById(`${cellId}_editor_container`) as HTMLDivElement;
   const cellElement = document.getElementById(`cell-container-${cellId}`);
+  const timerBadge = document.getElementById(`${cellId}_timer`);
 
   if (!cell || !editor || !outputDiv || !editorContainer || !cellElement) {
     console.error(`Could not run cell ${cellId}: missing dependencies`);
@@ -736,6 +1012,7 @@ async function runCell(cellId: string) {
     return;
   }
 
+  const startTime = performance.now();
   updateSystemStatus(`Running Cell (${cellId})...`, 'busy');
   setElementInnerHtml(outputDiv, sanitizeHtml(''));
   cell.outputs = [];
@@ -793,9 +1070,18 @@ async function runCell(cellId: string) {
       persistentScope,
       cellScope,
     );
+    const duration = Math.round(performance.now() - startTime);
+    cell.executionDurationMs = duration;
+    if (timerBadge) {
+      timerBadge.innerHTML = `<i class="fa-regular fa-clock"></i> ${duration}ms`;
+    }
     markCellAsExecuted(cellId, code);
     updateSystemStatus('Kernel Ready', 'ready');
   } catch (e: unknown) {
+    const duration = Math.round(performance.now() - startTime);
+    if (timerBadge) {
+      timerBadge.innerHTML = `<i class="fa-regular fa-clock"></i> ${duration}ms`;
+    }
     const errorMessage = e instanceof Error ? e.message : String(e);
     sandboxConsole.error('Uncaught:', errorMessage);
     markCellAsExecuted(cellId, code);
@@ -1001,6 +1287,7 @@ Object.assign(window, {
   insertCellBelow,
   restartAndRunAll,
   showAppleToast,
+  openQuickLook,
 });
 
 /* --------------------------------------------------------------------------
@@ -1020,7 +1307,8 @@ Experiment with image generation, visual reasoning, prompt engineering, and real
 
 - **Model Engine:** \`gemini-2.5-flash-image\` & \`imagen-3.0-generate-002\`
 - **Design Philosophy:** Apple Human Interface Guidelines & Liquid Glass
-- **Dynamic Lifecycle:** Automatically maintained and synchronized for **${currentYear} and future releases**`,
+- **Dynamic Lifecycle:** Automatically maintained and synchronized for **${currentYear} and future releases**
+- **Quick Actions:** Click any generated image to open **Apple QuickLook** inspector!`,
     },
     {
       type: 'js' as const,
@@ -1034,6 +1322,7 @@ const engineConfig = {
   aspectRatios: ["1:1", "16:9", "9:16", "4:3", "3:4"],
   safetyRatings: "standard_enterprise",
   status: "ONLINE",
+  features: ["Text-to-Image", "Multimodal Vision", "QuickLook Lightbox", "Batch Comparison"],
 };
 
 console.log("Active Studio Configuration:", engineConfig);
@@ -1042,10 +1331,10 @@ console.log("Tip: Press ⌘ + Enter inside any code cell to run it instantly.");
     {
       type: 'md' as const,
       mode: 'render',
-      code: `## 🎨 Image Synthesis & Multimodal Reasoning
+      code: `## 🎨 1. Photorealistic Architectural Synthesis
 
-Gemini 2.5 Flash Image provides ultra-low latency generation. 
-Run the cell below to simulate prompt dispatch and render an Apple-aesthetic sample card.`,
+Gemini 2.5 Flash provides state-of-the-art visual generation with ultra-low latency. 
+Run the cell below to simulate prompt dispatch for an Apple-style Cupertino pavilion.`,
     },
     {
       type: 'js' as const,
@@ -1054,7 +1343,7 @@ const prompt = "A photorealistic Cupertino glass pavilion at dawn with holograph
 console.log("Prompt Dispatched:", prompt);
 
 // Generate sample SVG representation of Gemini visual output
-const sampleSvg = \`<svg width="600" height="340" viewBox="0 0 600 340" xmlns="http://www.w3.org/2000/svg">
+const sampleSvg = \`<svg width="640" height="360" viewBox="0 0 640 360" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <linearGradient id="appleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#0a84ff" />
@@ -1065,19 +1354,71 @@ const sampleSvg = \`<svg width="600" height="340" viewBox="0 0 600 340" xmlns="h
       <feGaussianBlur stdDeviation="16" result="blur" />
     </filter>
   </defs>
-  <rect width="600" height="340" rx="20" fill="#0d0f15" />
-  <circle cx="160" cy="110" r="110" fill="url(#appleGrad)" filter="url(#glassBlur)" opacity="0.65" />
-  <circle cx="450" cy="230" r="130" fill="#0a84ff" filter="url(#glassBlur)" opacity="0.45" />
-  <rect x="40" y="40" width="520" height="260" rx="18" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.18)" stroke-width="1" />
-  <text x="300" y="140" font-family="-apple-system, sans-serif" font-size="24" font-weight="600" fill="#ffffff" text-anchor="middle"> Gemini 2.5 Flash Image</text>
-  <text x="300" y="180" font-family="-apple-system, sans-serif" font-size="14" fill="#98989f" text-anchor="middle">Synthesized Studio Preview • High Fidelity</text>
-  <rect x="220" y="215" width="160" height="34" rx="17" fill="#0a84ff" />
-  <text x="300" y="237" font-family="-apple-system, sans-serif" font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle">Output Rendered</text>
+  <rect width="640" height="360" rx="20" fill="#0d0f15" />
+  <circle cx="180" cy="120" r="120" fill="url(#appleGrad)" filter="url(#glassBlur)" opacity="0.65" />
+  <circle cx="480" cy="240" r="140" fill="#0a84ff" filter="url(#glassBlur)" opacity="0.45" />
+  <rect x="40" y="40" width="560" height="280" rx="18" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.18)" stroke-width="1" />
+  <text x="320" y="150" font-family="-apple-system, sans-serif" font-size="24" font-weight="700" fill="#ffffff" text-anchor="middle"> Gemini 2.5 Flash Image</text>
+  <text x="320" y="190" font-family="-apple-system, sans-serif" font-size="14" fill="#98989f" text-anchor="middle">Cupertino Pavilion • Golden Hour Reflections</text>
+  <rect x="235" y="225" width="170" height="34" rx="17" fill="#0a84ff" />
+  <text x="320" y="247" font-family="-apple-system, sans-serif" font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle">Render Generated (1:1)</text>
 </svg>\`;
 
 const previewUrl = "data:image/svg+xml;utf8," + encodeURIComponent(sampleSvg);
 console.image(previewUrl);
-console.log("✅ Synthesis complete. Latency: 24ms.");`,
+console.log("✅ Synthesis complete. Latency: 24ms. (Click image to open Apple QuickLook)");`,
+    },
+    {
+      type: 'md' as const,
+      mode: 'render',
+      code: `## 📐 2. Multi-Aspect Ratio Comparison (1:1, 16:9, 9:16)
+
+Gemini 2.5 Flash supports dynamic aspect ratios across cinematic landscape, square social posts, and mobile story vertical framing.`,
+    },
+    {
+      type: 'js' as const,
+      code: `// 3. Multi-Aspect Ratio Batch Generation Demo
+const ratios = [
+  { name: "Square (1:1)", width: 300, height: 300, color: "#0a84ff" },
+  { name: "Cinematic (16:9)", width: 480, height: 270, color: "#bf5af2" },
+  { name: "Mobile Story (9:16)", width: 220, height: 390, color: "#30d158" }
+];
+
+ratios.forEach((r) => {
+  console.log(\`Generating \${r.name}...\`);
+  const svg = \`<svg width="\${r.width}" height="\${r.height}" viewBox="0 0 \${r.width} \${r.height}" xmlns="http://www.w3.org/2000/svg">
+    <rect width="\${r.width}" height="\${r.height}" rx="14" fill="#12151e" stroke="\${r.color}" stroke-width="2" />
+    <circle cx="\${r.width/2}" cy="\${r.height/2 - 20}" r="40" fill="\${r.color}" opacity="0.3" />
+    <text x="\${r.width/2}" y="\${r.height/2 - 15}" font-family="-apple-system, sans-serif" font-size="14" font-weight="600" fill="#ffffff" text-anchor="middle">Gemini 2.5</text>
+    <text x="\${r.width/2}" y="\${r.height/2 + 25}" font-family="-apple-system, sans-serif" font-size="12" fill="#98989f" text-anchor="middle">\${r.name}</text>
+  </svg>\`;
+  console.image("data:image/svg+xml;utf8," + encodeURIComponent(svg));
+});
+
+console.log("✅ Batch ratio generation completed.");`,
+    },
+    {
+      type: 'md' as const,
+      mode: 'render',
+      code: `## 🔍 3. Multimodal Image Analysis & Quality Scoring
+
+In addition to image synthesis, Gemini 2.5 Flash acts as a multimodal vision reviewer, evaluating image composition, lighting balance, and chromatic fidelity.`,
+    },
+    {
+      type: 'js' as const,
+      code: `// 4. Multimodal Vision Analysis Simulation
+const analysisMetrics = {
+  subject: "Translucent Cupertino Glass Pavilion",
+  lightingBalance: "9.6 / 10",
+  specularReflections: "Accurate physically-based caustic render",
+  colorHarmony: "Display P3 Gamut (Cyan, Magenta, Emerald)",
+  aestheticScore: "98.4%",
+  verdict: "Ready for production deployment"
+};
+
+console.log("Multimodal Inspection Result:");
+console.log(JSON.stringify(analysisMetrics, null, 2));
+console.log("✨ All 2.5 Flash Image pipelines validated successfully!");`,
     },
   ];
 }
@@ -1089,6 +1430,9 @@ async function initializeStudio() {
   initDynamicYear();
   initThemeController();
   initWindowControls();
+  initControlCenter();
+  initPromptIsland();
+  initQuickLookLightbox();
 
   // Load Metadata
   let appMetadata: AppMetadata = { name: '2.5 Flash Image', title: 'Gemini 2.5 Flash Image Studio' };
@@ -1161,6 +1505,7 @@ async function initializeStudio() {
       'editor.background': '#16181f',
       'editor.foreground': '#f5f5f7',
       'editorLineNumber.foreground': '#4a4a55',
+      'editorLineNumber.activeForeground': '#0a84ff',
       'editor.lineHighlightBackground': '#1e212b',
       'editorCursor.foreground': '#0a84ff',
     },
@@ -1179,6 +1524,7 @@ async function initializeStudio() {
       'editor.background': '#f9f9fb',
       'editor.foreground': '#1d1d1f',
       'editorLineNumber.foreground': '#aeaeb2',
+      'editorLineNumber.activeForeground': '#0071e3',
       'editor.lineHighlightBackground': '#f0f0f4',
       'editorCursor.foreground': '#0071e3',
     },

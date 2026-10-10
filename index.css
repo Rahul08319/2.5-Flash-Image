@@ -1275,3 +1275,537 @@ html[data-theme="light"] .mesh-orb {
     background-color: var(--canvas-bg) !important;
   }
 }
+
+/* --------------------------------------------------------------------------
+   12. Apple Floating Quick Prompt Island
+   -------------------------------------------------------------------------- */
+.prompt-island-section {
+  margin-bottom: 24px;
+  position: relative;
+  z-index: 50;
+}
+
+.prompt-island-container {
+  background: var(--header-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--header-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--card-inner-highlight), var(--card-shadow);
+  padding: 14px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: all var(--transition-normal);
+}
+
+.prompt-island-container:focus-within {
+  border-color: var(--card-border-hover);
+  box-shadow: var(--card-inner-highlight), var(--card-shadow-hover);
+}
+
+.prompt-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--glass-tint);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-full);
+  padding: 6px 8px 6px 16px;
+  transition: all var(--transition-fast);
+}
+
+.prompt-input-wrapper:focus-within {
+  background: var(--card-hover-bg);
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 0 1px var(--accent-blue-glow);
+}
+
+.prompt-sparkle-icon {
+  color: var(--accent-blue);
+  font-size: 1.05rem;
+}
+
+.prompt-input-field {
+  flex-grow: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: var(--font-system);
+  font-size: 0.92rem;
+  color: var(--text-primary);
+  min-width: 200px;
+}
+
+.prompt-input-field::placeholder {
+  color: var(--text-tertiary);
+}
+
+.ratio-picker {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--glass-dropdown);
+  padding: 3px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--card-border);
+}
+
+.ratio-pill {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  font-weight: 500;
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.ratio-pill:hover {
+  color: var(--text-primary);
+}
+
+.ratio-pill.active {
+  background: var(--accent-blue);
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.generate-prompt-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--accent-blue);
+  border: none;
+  color: #ffffff;
+  font-family: var(--font-system);
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 8px 18px;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  box-shadow: 0 4px 14px var(--accent-blue-glow);
+  transition: all var(--transition-fast);
+}
+
+.generate-prompt-btn:hover {
+  background: var(--accent-blue-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px var(--accent-blue-glow);
+}
+
+.generate-prompt-btn:active {
+  transform: scale(0.96);
+}
+
+.prompt-tags {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 0 6px;
+  font-size: 0.78rem;
+}
+
+.tag-label {
+  color: var(--text-tertiary);
+  font-weight: 500;
+}
+
+.tag-pill {
+  background: var(--glass-tint);
+  border: 1px solid var(--card-border);
+  color: var(--text-secondary);
+  font-family: var(--font-system);
+  font-size: 0.76rem;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.tag-pill:hover {
+  background: var(--card-hover-bg);
+  color: var(--text-primary);
+  border-color: var(--card-border-hover);
+  transform: translateY(-1px);
+}
+
+/* --------------------------------------------------------------------------
+   13. Apple Control Center Popover Panel
+   -------------------------------------------------------------------------- */
+.control-center-popover {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 18px;
+  width: 320px;
+  background: var(--glass-dropdown);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--card-border-hover);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--card-inner-highlight), 0 20px 50px rgba(0, 0, 0, 0.45);
+  padding: 16px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  animation: popoverDrop 220ms var(--spring-snappy);
+}
+
+@keyframes popoverDrop {
+  from { opacity: 0; transform: translateY(-8px) scale(0.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.control-center-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--card-border);
+  padding-bottom: 8px;
+}
+
+.control-center-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.close-popover-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 14px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.close-popover-btn:hover {
+  background: var(--card-hover-bg);
+  color: var(--text-primary);
+}
+
+.control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.control-label {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.segmented-control {
+  display: flex;
+  background: var(--glass-tint);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-sm);
+  padding: 2px;
+}
+
+.segmented-control button {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-family: var(--font-system);
+  font-size: 0.76rem;
+  font-weight: 500;
+  padding: 5px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.segmented-control button.active {
+  background: var(--card-hover-bg);
+  color: var(--text-primary);
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+.control-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.82rem;
+  color: var(--text-primary);
+}
+
+/* iOS/macOS Toggle Switch */
+.apple-switch {
+  position: relative;
+  display: inline-block;
+  width: 38px;
+  height: 22px;
+}
+
+.apple-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.apple-switch .slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background-color: var(--code-bg);
+  border: 1px solid var(--card-border);
+  transition: 0.3s var(--spring-snappy);
+  border-radius: 22px;
+}
+
+.apple-switch .slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 2px;
+  bottom: 2px;
+  background-color: white;
+  transition: 0.3s var(--spring-snappy);
+  border-radius: 50%;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.apple-switch input:checked + .slider {
+  background-color: var(--accent-green);
+  border-color: transparent;
+}
+
+.apple-switch input:checked + .slider:before {
+  transform: translateX(16px);
+}
+
+.diagnostics-box {
+  background: var(--glass-tint);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  font-size: 0.75rem;
+  gap: 4px;
+}
+
+.diag-item {
+  display: flex;
+  justify-content: space-between;
+  color: var(--text-secondary);
+}
+
+/* --------------------------------------------------------------------------
+   14. Apple QuickLook Image Lightbox Modal
+   -------------------------------------------------------------------------- */
+.quicklook-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.quicklook-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+}
+
+.quicklook-dialog {
+  position: relative;
+  z-index: 1;
+  max-width: 90vw;
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--glass-dropdown);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--card-border-hover);
+  border-radius: var(--radius-xl);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6);
+  overflow: hidden;
+  animation: quickLookSpring 360ms var(--spring-bounce);
+}
+
+@keyframes quickLookSpring {
+  from { opacity: 0; transform: scale(0.9) translateY(20px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.quicklook-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px;
+  background: var(--header-bg);
+  border-bottom: 1px solid var(--card-border);
+}
+
+.quicklook-title-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.quicklook-filename {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.quicklook-badge {
+  font-size: 0.72rem;
+  background: var(--accent-blue-glow);
+  color: var(--accent-blue);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  font-weight: 500;
+}
+
+.quicklook-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.quicklook-btn {
+  background: var(--glass-tint);
+  border: 1px solid var(--card-border);
+  color: var(--text-primary);
+  font-family: var(--font-system);
+  font-size: 0.82rem;
+  font-weight: 500;
+  padding: 5px 12px;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all var(--transition-fast);
+}
+
+.quicklook-btn:hover {
+  background: var(--card-hover-bg);
+  border-color: var(--card-border-hover);
+}
+
+.quicklook-btn.primary {
+  background: var(--accent-blue);
+  border-color: transparent;
+  color: white;
+  font-weight: 600;
+}
+
+.quicklook-btn.primary:hover {
+  background: var(--accent-blue-hover);
+}
+
+.quicklook-btn.close-btn {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.quicklook-body {
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: auto;
+  max-height: calc(88vh - 60px);
+}
+
+.quicklook-body img {
+  max-width: 100%;
+  max-height: calc(88vh - 90px);
+  object-fit: contain;
+  border-radius: var(--radius-md);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+}
+
+/* --------------------------------------------------------------------------
+   15. Cell Meta Header Bar
+   -------------------------------------------------------------------------- */
+.cell-meta-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 0 8px 0;
+  margin-bottom: 6px;
+  border-bottom: 1px solid var(--card-border);
+  font-size: 0.76rem;
+  color: var(--text-tertiary);
+}
+
+.cell-meta-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cell-index-badge {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.cell-lang-badge {
+  background: var(--code-bg);
+  color: var(--accent-blue);
+  padding: 1px 7px;
+  border-radius: var(--radius-full);
+  font-size: 0.7rem;
+  font-weight: 500;
+  border: 1px solid var(--card-border);
+}
+
+.cell-timer-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--accent-green);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+}
+
+.cell-meta-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cell-meta-action-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-tertiary);
+  font-size: 0.74rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.cell-meta-action-btn:hover {
+  background: var(--card-hover-bg);
+  color: var(--text-primary);
+}

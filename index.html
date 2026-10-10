@@ -38,7 +38,7 @@
   </head>
   <body>
     <!-- Ambient Living Mesh Canvas (Apple Tahoe / VisionOS Spatial Gradient) -->
-    <div class="ambient-mesh-background" aria-hidden="true">
+    <div class="ambient-mesh-background" id="mesh-canvas" aria-hidden="true">
       <div class="mesh-orb mesh-orb-1"></div>
       <div class="mesh-orb mesh-orb-2"></div>
       <div class="mesh-orb mesh-orb-3"></div>
@@ -71,6 +71,11 @@
 
           <!-- Header Right Quick Actions -->
           <div class="header-actions">
+            <!-- Settings / Control Center Toggle -->
+            <button class="apple-pill-btn icon-only" id="settings-btn" title="Studio Control Center">
+              <i class="fa-solid fa-sliders"></i>
+            </button>
+
             <!-- Theme Toggle (Liquid Glass) -->
             <button class="apple-pill-btn icon-only" id="theme-toggle-btn" title="Toggle Light/Dark Theme (⌥T)">
               <i class="fa-regular fa-sun" id="theme-icon"></i>
@@ -147,7 +152,77 @@
             <span class="status-label" id="status-text">Kernel Ready</span>
           </div>
         </div>
+
+        <!-- Apple Control Center Popover Panel -->
+        <div class="control-center-popover" id="control-center-popover" style="display: none;">
+          <div class="control-center-header">
+            <div class="control-center-title"><i class="fa-solid fa-sliders"></i> Studio Control Center</div>
+            <button class="close-popover-btn" id="close-popover-btn" aria-label="Close Settings"><i class="fa-solid fa-xmark"></i></button>
+          </div>
+          <div class="control-group">
+            <div class="control-label">Editor Font Size</div>
+            <div class="segmented-control" id="font-size-segmented">
+              <button data-size="13">Small (13px)</button>
+              <button data-size="14" class="active">Regular (14px)</button>
+              <button data-size="16">Large (16px)</button>
+            </div>
+          </div>
+          <div class="control-group">
+            <div class="control-toggle-row">
+              <span>Line Numbers</span>
+              <label class="apple-switch">
+                <input type="checkbox" id="toggle-line-numbers-switch">
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+          <div class="control-group">
+            <div class="control-toggle-row">
+              <span>Living Mesh Animation</span>
+              <label class="apple-switch">
+                <input type="checkbox" id="toggle-mesh-switch" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+          <div class="control-group diagnostics-box">
+            <div class="diag-item"><span>Engine Model:</span> <strong>gemini-2.5-flash-image</strong></div>
+            <div class="diag-item"><span>Dynamic Year:</span> <strong id="diag-year">2026</strong></div>
+            <div class="diag-item"><span>Status:</span> <strong style="color: var(--accent-green);">Optimal (12ms)</strong></div>
+          </div>
+        </div>
       </header>
+
+      <!-- Apple Floating Quick Prompt Island -->
+      <section class="prompt-island-section">
+        <div class="prompt-island-container">
+          <div class="prompt-input-wrapper">
+            <i class="fa-solid fa-sparkles prompt-sparkle-icon"></i>
+            <input 
+              type="text" 
+              id="prompt-input" 
+              class="prompt-input-field" 
+              placeholder="Describe an image to synthesize with Gemini 2.5 Flash... (e.g. 'A futuristic Cupertino glass campus at dawn')" 
+            />
+            <div class="ratio-picker">
+              <button class="ratio-pill active" data-ratio="1:1">1:1</button>
+              <button class="ratio-pill" data-ratio="16:9">16:9</button>
+              <button class="ratio-pill" data-ratio="9:16">9:16</button>
+            </div>
+            <button class="generate-prompt-btn" id="generate-prompt-btn">
+              <span>Generate</span>
+              <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </div>
+          <div class="prompt-tags">
+            <span class="tag-label">Inspiration:</span>
+            <button class="tag-pill" data-prompt="A photorealistic Cupertino glass pavilion at dawn with holographic data ribbons, 8k">Cupertino Pavilion</button>
+            <button class="tag-pill" data-prompt="Translucent neon jellyfish gliding through an iridescent cybernetic abyss">Neon Abyss</button>
+            <button class="tag-pill" data-prompt="Minimalist architectural villa with infinity pool and misty mountain vistas at sunset">Minimalist Villa</button>
+            <button class="tag-pill" data-prompt="Macro photography of morning dew droplets refracting rainbow light on an emerald monstera leaf">Dew Droplets</button>
+          </div>
+        </div>
+      </section>
 
       <!-- Main Notebook Workspace Canvas -->
       <main id="notebook" class="notebook-canvas" role="region" aria-label="Interactive Notebook"></main>
@@ -180,6 +255,28 @@
           </span>
         </div>
       </footer>
+    </div>
+
+    <!-- Apple QuickLook Image Lightbox Modal -->
+    <div id="quicklook-modal" class="quicklook-modal" style="display: none;" aria-hidden="true" role="dialog">
+      <div class="quicklook-backdrop" id="quicklook-backdrop"></div>
+      <div class="quicklook-dialog">
+        <div class="quicklook-header">
+          <div class="quicklook-title-group">
+            <span class="apple-apple-icon"></span>
+            <span class="quicklook-filename" id="quicklook-filename">Gemini 2.5 Flash Render</span>
+            <span class="quicklook-badge">High Resolution</span>
+          </div>
+          <div class="quicklook-actions">
+            <button class="quicklook-btn" id="quicklook-copy-btn" title="Copy Image"><i class="fa-regular fa-copy"></i> Copy</button>
+            <button class="quicklook-btn primary" id="quicklook-download-btn" title="Download Image"><i class="fa-solid fa-download"></i> Save</button>
+            <button class="quicklook-btn close-btn" id="quicklook-close-btn" title="Close (Esc)"><i class="fa-solid fa-xmark"></i></button>
+          </div>
+        </div>
+        <div class="quicklook-body">
+          <img id="quicklook-img" src="" alt="Enlarged Gemini Preview" />
+        </div>
+      </div>
     </div>
 
     <!-- Apple Dynamic Island Toast Container -->

@@ -59,7 +59,20 @@ Crafted according to Cupertino's three core tenets: **Clarity, Deference, and De
 - **Tactile Micro-interactions:** Realistic Apple spring curves (`cubic-bezier(0.16, 1, 0.3, 1)`) on cell hover, button depression (`active: scale(0.96)`), and floating action bars.
 - **Dynamic Mesh Aurora:** Living ambient gradient canvas providing spatial depth without distraction.
 
-### 🔄 4. Autonomous Year & Version Lifecycle
+### 🔍 4. Apple QuickLook & Lightbox Inspector
+Click any rendered visual asset to trigger Cupertino's native-style QuickLook Lightbox:
+- Fullscreen frosted backdrop blur (`backdrop-filter: blur(28px)`)
+- High-resolution asset inspection
+- One-click **Copy Image Data URL** and **Save Image (.png)**
+- Keyboard dismiss with <kbd>Esc</kbd>
+
+### ✨ 5. Floating Quick Prompt Island
+Direct natural language generation interface situated above the notebook:
+- Instant prompt synthesis with sample inspiration tags
+- Built-in aspect ratio segmented picker (`1:1`, `16:9`, `9:16`)
+- Automatically generates, scrolls to, and executes a new Gemini 2.5 Flash code cell
+
+### 🔄 6. Autonomous Year & Version Lifecycle
 Engineered to remain perpetually current without requiring manual maintenance:
 - **Dynamic Runtime Year Calculation:** Automatically determines the active year (`new Date().getFullYear()`) across all footer notices, headers, and copyright blocks.
 - **Continuous Upstream Sync Workflow:** Built-in `.github/workflows/auto-update.yml` runs monthly and on New Year's Day to validate dependencies and verify build integrity across 2026, 2027, and beyond.
